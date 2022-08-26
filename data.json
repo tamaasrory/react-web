@@ -1,0 +1,30 @@
+{
+    "tree":[
+        {
+            "id": "1",
+            "labelName": "Car",
+            "status": "ENABLED",
+            "children": [
+                {
+                    "id": "1-1",
+                    "labelName": "Mercedes Benz",
+                    "status": "ENABLED",
+                    "count": 460
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "labelName": "Car 2",
+            "status": "ENABLED",
+            "children": [
+                {
+                    "id": "2-1",
+                    "labelName": "Mercedes Benz 2",
+                    "status": "ENABLED",
+                    "count": 460
+                }
+            ]
+        }
+    ]
+}
