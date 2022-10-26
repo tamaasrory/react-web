@@ -1,86 +1,49 @@
 import './App.css';
-import React from 'react';
-// import { useEffect, useState } from 'react';
+import { io } from "socket.io-client";
+import { useState } from 'react';
 
-// function App() {
-//   const [state, setState] = useState('');
+const socket = io.connect('http://testsocket.localhost/api',{
+  path: "/api/uploader",
+  transports: ['websocket'],
+}/*, {secure: true}*/);
 
-//   useEffect(() => {
-//     console.log('useEffect => ', state)
 
-//   }, [state])
+function App() {
+  const [Progress, setProgress] = useState({ sheet: null, current: 0 });
 
-//   const p1 = async () => {
-//     setState('');
-//     await new Promise((solve, reject) => {
-//       setTimeout(() => solve(1), 1500);
-//     });
-//     setState('jadiii')
-//   }
-
-//   const p2 = async () => {
-//     await p1();
-//     p3(1, 2, 3);
-//   }
-
-//   const p3 = async (a, b, c) => {
-//     console.log('p3 => ', { a, b, c });
-//     p4(a, b, c);
-//   }
-
-//   const p4 = async (a, b, c) => {
-//     setTimeout(() => {
-//       console.log('p4 => ', { a, b, c }, state)
-//     }, 1000);
-
-//   }
-
-//   return (
-//     <div>
-//       <button onClick={p2}>simulate</button>
-//       <div>{state}</div>
-//     </div>
-//   );
-// }
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      datas: ''
-    }
-  }
-
-  p1 = async () => {
-    this.setState({ datas: '' });
-    await new Promise((solve, reject) => {
-      setTimeout(() => solve(1), 1500);
+  const processData = async () => {
+    socket.removeAllListeners();
+    socket.on("eventdata", (args) => {
+      console.log('eventdata => ', args)
+      setProgress(args);
     });
-    this.setState({ datas: 'jadiii' });
+    await fetch('http://testsocket.localhost/test/socket').then((response) => {
+      console.log(response);
+    }).catch((error) => {
+      console.log(error);
+    })
   }
 
-  p2 = async () => {
-    await this.p1();
-    this.p3(1, 2, 3);
-  }
-
-  p3 = async (a, b, c) => {
-    console.log('p3 => ', { a, b, c });
-    this.p4(a, b, c);
-  }
-
-  p4 = async (a, b, c) => {
-    setTimeout(() => {
-      console.log('p4 => ', { a, b, c }, this.state.datas)
-    }, 1000);
-  }
-
-  render() {
-    return <div>
-      <button onClick={this.p2}>simulate</button>
-      <div>{this.state.datas}</div>
-    </div>;
-  }
+  return (
+    <div>
+      <div style={{ padding: 10 }}>
+        {Progress.sheet !== null && <div style={{ paddingBottom: 10 }}>
+          Please wait in upload and processing data.
+          <div>
+            <strong>Current: Sheet {Progress.sheet} and at Row {Progress.current}</strong>
+          </div>
+        </div>}
+        <button
+          type="button"
+          onClick={processData}
+          disabled={Progress.sheet !== null && Progress.sheet === 'completed'}
+          className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 disabled"
+        >
+          Test Process State
+        </button>
+      </div>
+    </div >
+  );
 }
 
 export default App;
